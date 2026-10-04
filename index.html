@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>হোয়াটসঅ্যাপ লিংক জেনারেটর</title>
+  <meta name="description" content="মোবাইল নম্বর লিখলেই হোয়াটসঅ্যাপ লিংক তৈরি হয়ে যাবে। লিংকে ক্লিক করলে মেসেজসহ সরাসরি হোয়াটসঅ্যাপ খুলবে।">
+  <meta name="theme-color" content="#073b32">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💬</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <div class="logo" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#073b32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+      </div>
+      <h1>হোয়াটসঅ্যাপ লিংক জেনারেটর</h1>
+      <p>নম্বর লিখুন, লিংক নিচে তৈরি হয়ে যাবে।</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <label for="number">মোবাইল নম্বর</label>
+      <div class="field" id="field">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg>
+        <input id="number" type="tel" inputmode="numeric" enterkeyhint="done" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="01845752466" aria-describedby="hint error">
+      </div>
+      <p class="hint" id="hint">১১ সংখ্যা লিখলেই লিংক নিজে তৈরি হবে এবং বক্স খালি হয়ে যাবে।</p>
+      <p class="error" id="error" role="alert" hidden></p>
+      <p class="error" id="fatal" role="alert" hidden></p>
+      <button type="button" class="btn primary block" id="make">লিংক তৈরি করুন</button>
+
+      <div class="chat">
+        <small>হোয়াটসঅ্যাপে এই মেসেজ আগে থেকেই লেখা থাকবে</small>
+        <div class="bubble" id="bubble"></div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="listTitle">
+      <div class="list-head">
+        <h2 id="listTitle">তৈরি করা লিংক</h2>
+        <button type="button" class="btn quiet small" id="clearAll" hidden>সব মুছুন</button>
+      </div>
+      <ul class="list" id="list"></ul>
+      <p class="empty" id="empty">এখনো কোনো লিংক নেই। উপরের বক্সে নম্বর লিখুন, লিংক এখানে দেখা যাবে।</p>
+    </section>
+  </main>
+
+  <footer class="wrap foot">নম্বরগুলো শুধু আপনার ব্রাউজারে থাকে, কোনো সার্ভারে পাঠানো হয় না।</footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+</html>
