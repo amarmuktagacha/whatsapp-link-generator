@@ -1,4 +1,4 @@
-name: Build website
+name: Deploy static site to GitHub Pages
 
 on:
   push:
@@ -7,32 +7,28 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-  group: website-build
+  group: pages
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Validate and package website
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Validate required files
-        run: |
-          test -f index.html
-          test -f style.css
-          test -f script.js
-          test -f .nojekyll
-          grep -q '<html' index.html
-      - name: Package website artifact
-        uses: actions/upload-artifact@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: whatsapp-link-generator-site
-          path: |
-            index.html
-            style.css
-            script.js
-            .nojekyll
-          if-no-files-found: error
+          path: .
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
