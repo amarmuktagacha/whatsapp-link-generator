@@ -41,6 +41,30 @@
       </div>
     </section>
 
+    <section class="card" aria-labelledby="engTitle">
+      <h2 id="engTitle">অটো ইঞ্জিন</h2>
+      <p class="hint">নম্বরের তালিকা দিন (প্রতি লাইনে একটি, বা কমা দিয়ে)। ইঞ্জিন একটার পর একটা বক্সে বসিয়ে লিংক বানাবে।</p>
+      <textarea id="bulk" rows="4" placeholder="01845752466&#10;01712345678&#10;01912345678" spellcheck="false"></textarea>
+      <label class="speed" for="speed">
+        <span>প্রতি নম্বরের মধ্যে বিরতি</span>
+        <select id="speed">
+          <option value="1">১ সেকেন্ড</option>
+          <option value="2" selected>২ সেকেন্ড</option>
+          <option value="3">৩ সেকেন্ড</option>
+          <option value="5">৫ সেকেন্ড</option>
+        </select>
+      </label>
+      <div class="eng-row">
+        <button type="button" class="btn primary" id="startBtn">শুরু করুন</button>
+        <button type="button" class="btn primary" id="pauseBtn" hidden>বিরতি দিন</button>
+        <button type="button" class="btn" id="skipBtn">স্কিপ</button>
+        <button type="button" class="btn quiet" id="resetBtn">রিসেট</button>
+      </div>
+      <div class="bar" aria-hidden="true"><span id="barFill"></span></div>
+      <p class="eng-info"><span id="engCount">এখনো তালিকা নেই</span><strong id="engState"></strong></p>
+      <p class="hint">মেসেজ নিজে থেকে যায় না। শুধু যাদের মেসেজ পাঠানো ঠিক, তাদের নম্বর দিন। প্রতিটি লিংকে আপনি নিজে চাপ দিলে তবেই WhatsApp খুলবে।</p>
+    </section>
+
     <section class="card" aria-labelledby="listTitle">
       <div class="list-head">
         <h2 id="listTitle">তৈরি করা লিংক</h2>

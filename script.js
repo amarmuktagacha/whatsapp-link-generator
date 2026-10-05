@@ -3,7 +3,8 @@
 
   var MESSAGE = 'বাংলা ভিডিও গ্রুপ https://t.me/K_Drama_Seoul_hindi/359';
   var STORE_KEY = 'wa-links-v1';
-  var MAX_ITEMS = 20;
+  var MAX_ITEMS = 300;
+  var ENG_KEY = 'wa-engine-v1';
   var BN_DIGITS = '০১২৩৪৫৬৭৮৯';
 
   function $(id) { return document.getElementById(id); }
@@ -17,6 +18,15 @@
   var clearAll = $('clearAll');
   var makeBtn = $('make');
   var toast = $('toast');
+  var bulk = $('bulk');
+  var speed = $('speed');
+  var startBtn = $('startBtn');
+  var pauseBtn = $('pauseBtn');
+  var skipBtn = $('skipBtn');
+  var resetBtn = $('resetBtn');
+  var barFill = $('barFill');
+  var engCount = $('engCount');
+  var engState = $('engState');
 
   // If anything breaks, show it on screen instead of failing silently
   window.addEventListener('error', function (e) {
@@ -188,6 +198,109 @@
     if (looksFull) showError(MSG_INVALID);
     else showError(force ? MSG_INCOMPLETE : '');
   }
+
+  /* ---------- auto engine (runs on a list the person pastes) ---------- */
+  function bn(x) {
+    return String(x).replace(/\d/g, function (d) { return BN_DIGITS.charAt(+d); });
+  }
+  function loadEng() {
+    try {
+      var v = JSON.parse(localStorage.getItem(ENG_KEY));
+      if (v && Array.isArray(v.q)) {
+        var q = v.q.filter(function (x) { return /^8801[3-9]\d{8}$/.test(x); });
+        return { q: q, i: Math.min(v.i | 0, q.length), bad: v.bad | 0 };
+      }
+    } catch (e) {}
+    return { q: [], i: 0, bad: 0 };
+  }
+  function saveEng() {
+    try { localStorage.setItem(ENG_KEY, JSON.stringify(eng)); } catch (e) {}
+  }
+
+  var eng = loadEng();
+  var running = false;
+  var timer = null;
+
+  function paintEngine() {
+    var total = eng.q.length;
+    var done = eng.i;
+    var finished = total > 0 && done >= total;
+    barFill.style.width = (total ? (done / total) * 100 : 0) + '%';
+    engCount.textContent = total
+      ? bn(done) + ' / ' + bn(total) + ' সম্পন্ন' + (eng.bad ? ' · ' + bn(eng.bad) + 'টি ভুল/ডুপ্লিকেট বাদ' : '')
+      : 'এখনো তালিকা নেই';
+    engState.textContent = running ? 'চলছে…' : finished ? 'শেষ হয়েছে ✓' : total ? 'বিরতিতে' : '';
+    startBtn.hidden = running;
+    pauseBtn.hidden = !running;
+    startBtn.textContent = (total && done > 0 && !finished) ? 'চালিয়ে যান' : 'শুরু করুন';
+    skipBtn.disabled = !total || finished;
+    resetBtn.disabled = !total;
+  }
+
+  function loadList(text) {
+    var seen = {};
+    var q = [];
+    var bad = 0;
+    text.split(/[\n,;]+/).forEach(function (tok) {
+      if (!tok.trim()) return;
+      var n = normalize(toDigits(tok));
+      if (!n || seen[n]) { bad++; return; }
+      seen[n] = true;
+      q.push(n);
+    });
+    eng = { q: q, i: 0, bad: bad };
+    saveEng();
+  }
+
+  function tick() {
+    if (!running) return;
+    if (eng.i >= eng.q.length) {
+      running = false;
+      paintEngine();
+      say('সব লিংক তৈরি হয়েছে');
+      return;
+    }
+    input.value = '0' + eng.q[eng.i].slice(3);        // shows 01XXXXXXXXX in the box
+    timer = setTimeout(function () {
+      check(false);                                    // makes the link, clears the box
+      eng.i++;
+      saveEng();
+      paintEngine();
+      timer = setTimeout(tick, (parseInt(speed.value, 10) || 2) * 1000);
+    }, 350);
+  }
+
+  function startEngine() {
+    var text = bulk.value.trim();
+    if (text) { loadList(text); bulk.value = ''; }
+    if (!eng.q.length) { say('আগে নম্বরের তালিকা দিন'); paintEngine(); return; }
+    if (eng.i >= eng.q.length) { paintEngine(); return; }
+    running = true;
+    paintEngine();
+    tick();
+  }
+  function pauseEngine() {
+    running = false;
+    clearTimeout(timer);
+    input.value = '';
+    paintEngine();
+  }
+  startBtn.addEventListener('click', startEngine);
+  pauseBtn.addEventListener('click', pauseEngine);
+  skipBtn.addEventListener('click', function () {
+    if (eng.i < eng.q.length) { eng.i++; saveEng(); }
+    if (running) { clearTimeout(timer); input.value = ''; tick(); }
+    paintEngine();
+  });
+  resetBtn.addEventListener('click', function () {
+    running = false;
+    clearTimeout(timer);
+    input.value = '';
+    eng = { q: [], i: 0, bad: 0 };
+    saveEng();
+    paintEngine();
+  });
+  paintEngine();
 
   /* ---------- events ---------- */
   ['input', 'keyup', 'change', 'compositionend'].forEach(function (evt) {
